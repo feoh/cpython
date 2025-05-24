@@ -336,7 +336,10 @@ class UnixConsole(Console):
         raw.lflag |= termios.ISIG
         raw.cc[termios.VMIN] = 1
         raw.cc[termios.VTIME] = 0
-        tcsetattr(self.input_fd, termios.TCSADRAIN, raw)
+        try:
+            tcsetattr(self.input_fd, termios.TCSADRAIN, raw)
+        except termios.error:
+            self.restore()
 
         # In macOS terminal we need to deactivate line wrap via ANSI escape code
         if platform.system() == "Darwin" and os.getenv("TERM_PROGRAM") == "Apple_Terminal":

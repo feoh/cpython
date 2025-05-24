@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import sys
 import _colorize
+import termios
 
 from contextlib import contextmanager
 from dataclasses import dataclass, field, fields
@@ -590,6 +591,8 @@ class Reader:
             self.dirty = True
             self.last_command = None
             self.calc_screen()
+        except termios.error:
+            self.restore()
         except BaseException:
             self.restore()
             raise
